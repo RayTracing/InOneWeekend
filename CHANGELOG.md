@@ -6,6 +6,7 @@ v1.55.0 (github master)
  - Changed MAXFLOAT to FLT_MAX for better compatibility.
  - General whitespace cleanup.
  - Removed unused sphere constructor.
+ - Removed extra semicolon in vec3.
 
 v1.54.0 (2018-08-26)
 ---------------------
