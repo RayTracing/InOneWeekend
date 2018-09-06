@@ -11,6 +11,7 @@
 
 #ifndef CAMERAH
 #define CAMERAH
+
 #include "ray.h"
 
 vec3 random_in_unit_disk() {
@@ -36,10 +37,11 @@ class camera {
             horizontal = 2*half_width*focus_dist*u;
             vertical = 2*half_height*focus_dist*v;
         }
+
         ray get_ray(float s, float t) {
             vec3 rd = lens_radius*random_in_unit_disk();
             vec3 offset = u * rd.x() + v * rd.y();
-            return ray(origin + offset, lower_left_corner + s*horizontal + t*vertical - origin - offset); 
+            return ray(origin + offset, lower_left_corner + s*horizontal + t*vertical - origin - offset);
         }
 
         vec3 origin;
@@ -49,8 +51,5 @@ class camera {
         vec3 u, v, w;
         float lens_radius;
 };
+
 #endif
-
-
-
-

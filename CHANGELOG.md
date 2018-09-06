@@ -4,6 +4,7 @@ Change Log — _Ray Tracing in One Weekend_
 v1.55.0 (github master)
 ------------------------
  - Changed MAXFLOAT to FLT_MAX for better compatibility.
+ - General whitespace cleanup.
 
 v1.54.0 (2018-08-26)
 ---------------------
