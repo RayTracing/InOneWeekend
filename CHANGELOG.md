@@ -11,6 +11,7 @@ v1.55.0 (github master)
  - Removed the unused world from the previous chapters.
  - Removed unused function "vec3::make_unit_vector".
  - Removed unused hitable_list constructor.
+ - Renamed tmin/tmax to t_min/t_max for consistency.
 
 v1.54.0 (2018-08-26)
 ---------------------
