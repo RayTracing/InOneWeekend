@@ -17,7 +17,7 @@ class material;
 
 struct hit_record
 {
-    float t;
+    Real t;
     vec3 p;
     vec3 normal;
     material *mat_ptr;
@@ -25,7 +25,7 @@ struct hit_record
 
 class hitable  {
     public:
-        virtual bool hit(const ray& r, float t_min, float t_max, hit_record& rec) const = 0;
+        virtual bool hit(const ray& r, Real t_min, Real t_max, hit_record& rec) const = 0;
 };
 
 
