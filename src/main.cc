@@ -10,6 +10,7 @@
 //==================================================================================================
 
 #include <iostream>
+#include <vector>
 #include "sphere.h"
 #include "hitable_list.h"
 #include "float.h"
@@ -68,11 +69,23 @@ hitable *random_scene() {
     return new hitable_list(list,i);
 }
 
+
+void write_image(uint8_t *image, int nx, int ny) {
+  std::cout << "P3\n" << nx << " " << ny << "\n255\n";
+  for (int j = ny-1; j >= 0; j--) {
+    for (int i = 0; i < nx; ++i) {
+      std::cout << static_cast<int>(image[3*(j*nx+i)+0]) << " ";
+      std::cout << static_cast<int>(image[3*(j*nx+i)+1]) << " ";
+      std::cout << static_cast<int>(image[3*(j*nx+i)+2]) << std::endl;
+    }
+  }
+}
+
+
 int main() {
     int nx = 1200;
     int ny = 800;
     int ns = 10;
-    std::cout << "P3\n" << nx << " " << ny << "\n255\n";
     hitable *list[5];
     float R = cos(M_PI/4);
     list[0] = new sphere(vec3(0,0,-1), 0.5, new lambertian(vec3(0.1, 0.2, 0.5)));
@@ -90,6 +103,7 @@ int main() {
 
     camera cam(lookfrom, lookat, vec3(0,1,0), 20, float(nx)/float(ny), aperture, dist_to_focus);
 
+    std::vector<uint8_t> image(nx * ny * 3);
     for (int j = ny-1; j >= 0; j--) {
         for (int i = 0; i < nx; i++) {
             vec3 col(0, 0, 0);
@@ -101,10 +115,11 @@ int main() {
             }
             col /= float(ns);
             col = vec3( sqrt(col[0]), sqrt(col[1]), sqrt(col[2]) );
-            int ir = int(255.99*col[0]); 
-            int ig = int(255.99*col[1]); 
-            int ib = int(255.99*col[2]); 
-            std::cout << ir << " " << ig << " " << ib << "\n";
+       
+            image[3*(j*nx+i)+0] = int(255.99*col[0]);
+            image[3*(j*nx+i)+1] = int(255.99*col[1]);
+            image[3*(j*nx+i)+2] = int(255.99*col[2]);
         }
     }
+    write_image(&image[0], nx, ny);
 }
