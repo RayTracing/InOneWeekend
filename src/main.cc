@@ -73,14 +73,14 @@ hitable *random_scene() {
 
 
 void write_image(uint8_t *image, int nx, int ny) {
-  std::cout << "P3\n" << nx << " " << ny << "\n255\n";
-  for (int j = ny-1; j >= 0; j--) {
-    for (int i = 0; i < nx; ++i) {
-      std::cout << static_cast<int>(image[3*(j*nx+i)+0]) << " ";
-      std::cout << static_cast<int>(image[3*(j*nx+i)+1]) << " ";
-      std::cout << static_cast<int>(image[3*(j*nx+i)+2]) << std::endl;
+    std::cout << "P3\n" << nx << " " << ny << "\n255\n";
+    for (int j = ny-1; j >= 0; j--) {
+        for (int i = 0; i < nx; ++i) {
+            std::cout << static_cast<int>(image[3*(j*nx+i)+0]) << " ";
+            std::cout << static_cast<int>(image[3*(j*nx+i)+1]) << " ";
+            std::cout << static_cast<int>(image[3*(j*nx+i)+2]) << std::endl;
+        }
     }
-  }
 }
 
 
