@@ -94,6 +94,11 @@ int main() {
 	int ny = 240;
     int ns = 10;
 
+
+	/*
+		Addresses issue: #18
+		std::ofstream rather than std::cout, so one doesn't need to redirect the output
+	*/
 	// open output file
 	std::ofstream file;
 	const char* outputFilename = "output_image.ppm";

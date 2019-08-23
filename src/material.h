@@ -52,6 +52,24 @@ vec3 random_in_unit_sphere() {
     return p;
 }
 
+/*
+	Addresses issue: #26
+
+	Using random_on_unit_sphere() in the lambertian material doesn't generate cosine weighted hemisphere samples, 
+	but rather cos^3 weighted hemisphere samples, resulting in a cos^2 brdf and not a diffuse one (the two differ 
+	only slightly visually though).
+
+	Note that this has a singularity at (0,0,0), theoretically the probability of 
+	picking (0,0,0) is 0 (since a point is a set of measure 0 with respect to the volume Lebesgue measure, 
+	however in practice with finite precision this is not so).
+*/
+vec3 random_on_unit_sphere()
+{
+	vec3 res = random_in_unit_sphere();
+	res.make_unit_vector();
+	return res;
+}
+
 
 class material  {
     public:
@@ -63,7 +81,7 @@ class lambertian : public material {
     public:
         lambertian(const vec3& a) : albedo(a) {}
         virtual bool scatter(const ray& /*r_in*/, const hit_record& rec, vec3& attenuation, ray& scattered) const  {
-             vec3 target = rec.p + rec.normal + random_in_unit_sphere();
+             vec3 target = rec.p + rec.normal + random_on_unit_sphere(); // random_in_unite_sphere() -> random_on_unit_sphere(), Addresses issue: #26
              scattered = ray(rec.p, target-rec.p);
              attenuation = albedo;
              return true;
