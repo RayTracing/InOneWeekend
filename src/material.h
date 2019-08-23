@@ -80,9 +80,22 @@ class material  {
 class lambertian : public material {
     public:
         lambertian(const vec3& a) : albedo(a) {}
-        virtual bool scatter(const ray& /*r_in*/, const hit_record& rec, vec3& attenuation, ray& scattered) const  {
-             vec3 target = rec.p + rec.normal + random_on_unit_sphere(); // random_in_unite_sphere() -> random_on_unit_sphere(), Addresses issue: #26
-             scattered = ray(rec.p, target-rec.p);
+        virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const  {
+			/*
+				Addresses issue: #9
+
+				Fixes scattering on the outside, by picking the correct normal. 
+				And adds an offset along the normal to avoid self-intersection caused by numerical errors.
+			*/
+
+			// always pick the correct facing normal (in case of scattering inside a sphere)
+			vec3 normal = dot(rec.normal, r_in.direction()) < 0.0f ? rec.normal : -rec.normal;
+
+			// use correct normal
+             vec3 target = rec.p + normal + random_on_unit_sphere(); // random_in_unite_sphere() -> random_on_unit_sphere(), Addresses issue: #26
+             
+			 // offset the origin to avoid self-intersection
+			 scattered = ray(rec.p + normal * OFFSET_EPSILON, target-rec.p);
              attenuation = albedo;
              return true;
         }
@@ -95,10 +108,23 @@ class metal : public material {
     public:
         metal(const vec3& a, float f) : albedo(a) { if (f < 1) fuzz = f; else fuzz = 1; }
         virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const  {
-            vec3 reflected = reflect(unit_vector(r_in.direction()), rec.normal);
-            scattered = ray(rec.p, reflected + fuzz*random_in_unit_sphere());
+			/*
+				Addresses issue: #9
+
+				Fixes scattering on the outside, by picking the correct normal.
+				And adds an offset along the normal to avoid self-intersection caused by numerical errors.
+			*/
+
+			// always pick the correct facing normal (in case of scattering inside a sphere)
+			vec3 normal = dot(rec.normal, r_in.direction()) < 0.0f ? rec.normal : -rec.normal;
+			// use correct normal
+            vec3 reflected = reflect(unit_vector(r_in.direction()), normal);
+			// offset the origin to avoid self-intersection
+            scattered = ray(rec.p + normal * OFFSET_EPSILON, reflected + fuzz*random_on_unit_sphere()); // on_unit_sphere for lambertian behaviour
             attenuation = albedo;
-            return (dot(scattered.direction(), rec.normal) > 0);
+
+			// use the correct normal
+            return (dot(scattered.direction(), normal) > 0);
         }
         vec3 albedo;
         float fuzz;
@@ -109,6 +135,12 @@ class dielectric : public material {
     public:
         dielectric(float ri) : ref_idx(ri) {}
         virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const  {
+			/*
+				Addresses issue: #9
+
+				Adds an offset along the normal to avoid self-intersection caused by numerical errors.
+			*/
+
              vec3 outward_normal;
              vec3 reflected = reflect(r_in.direction(), rec.normal);
              float ni_over_nt;
@@ -128,14 +160,25 @@ class dielectric : public material {
                   ni_over_nt = 1.0f / ref_idx;
                   cosine = -dot(r_in.direction(), rec.normal) / r_in.direction().length();
              }
-             if (refract(r_in.direction(), outward_normal, ni_over_nt, refracted))
-                reflect_prob = schlick(cosine, ref_idx);
+			 if (refract(r_in.direction(), outward_normal, ni_over_nt, refracted))
+			 {
+				 /*
+					Addresses issue: #9
+
+					Comment: schlick(cosine, ref_idx) may be confusing, since one would expect schlick(cosine, ni_over_nt)
+					But as it happens those two are equal.
+				 */
+				 reflect_prob = schlick(cosine, ref_idx);
+			 }
              else
                 reflect_prob = 1.0;
+
+			 // offset the origin to avoid self-intersection
              if (random() < reflect_prob)
-                scattered = ray(rec.p, reflected);
+                scattered = ray(rec.p + outward_normal * OFFSET_EPSILON, reflected);
              else
-                scattered = ray(rec.p, refracted);
+                scattered = ray(rec.p - outward_normal * OFFSET_EPSILON, refracted); // negative offset, since the origin must continue on the other side of the surface
+
              return true;
         }
 
