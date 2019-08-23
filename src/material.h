@@ -13,7 +13,8 @@
 
 #include "ray.h"
 #include "hitable.h"
-#include "random.h"
+//#include "random.h"
+#include "rng.hpp" // random() provides better random numbers than rand() % (RAND_MAX + 1.0);
 
 struct hit_record;
 
@@ -28,7 +29,7 @@ float schlick(float cosine, float ref_idx) {
 bool refract(const vec3& v, const vec3& n, float ni_over_nt, vec3& refracted) {
     vec3 uv = unit_vector(v);
     float dt = dot(uv, n);
-    float discriminant = 1.0 - ni_over_nt*ni_over_nt*(1-dt*dt);
+    float discriminant = 1.0f - ni_over_nt*ni_over_nt*(1-dt*dt);
     if (discriminant > 0) {
         refracted = ni_over_nt*(uv - n*dt) - n*sqrt(discriminant);
         return true;
@@ -46,7 +47,7 @@ vec3 reflect(const vec3& v, const vec3& n) {
 vec3 random_in_unit_sphere() {
     vec3 p;
     do {
-        p = 2.0*vec3(random_double(),random_double(),random_double()) - vec3(1,1,1);
+        p = 2.0f*vec3(random(),random(),random()) - vec3(1,1,1);
     } while (p.squared_length() >= 1.0);
     return p;
 }
@@ -61,7 +62,7 @@ class material  {
 class lambertian : public material {
     public:
         lambertian(const vec3& a) : albedo(a) {}
-        virtual bool scatter(const ray& r_in, const hit_record& rec, vec3& attenuation, ray& scattered) const  {
+        virtual bool scatter(const ray& /*r_in*/, const hit_record& rec, vec3& attenuation, ray& scattered) const  {
              vec3 target = rec.p + rec.normal + random_in_unit_sphere();
              scattered = ray(rec.p, target-rec.p);
              attenuation = albedo;
@@ -106,14 +107,14 @@ class dielectric : public material {
              }
              else {
                   outward_normal = rec.normal;
-                  ni_over_nt = 1.0 / ref_idx;
+                  ni_over_nt = 1.0f / ref_idx;
                   cosine = -dot(r_in.direction(), rec.normal) / r_in.direction().length();
              }
              if (refract(r_in.direction(), outward_normal, ni_over_nt, refracted))
                 reflect_prob = schlick(cosine, ref_idx);
              else
                 reflect_prob = 1.0;
-             if (random_double() < reflect_prob)
+             if (random() < reflect_prob)
                 scattered = ray(rec.p, reflected);
              else
                 scattered = ray(rec.p, refracted);

@@ -12,11 +12,13 @@
 //==================================================================================================
 
 #include "ray.h"
+#include "constants.hpp"		// pi<float>(), issues: #65, #67
+#include "rng.hpp"				// random(), issue: #65
 
 vec3 random_in_unit_disk() {
     vec3 p;
     do {
-        p = 2.0*vec3(drand48(),drand48(),0) - vec3(1,1,0);
+        p = 2.0*vec3(random(),random(),0) - vec3(1,1,0);
     } while (dot(p,p) >= 1.0);
     return p;
 }
@@ -26,7 +28,7 @@ class camera {
         camera(vec3 lookfrom, vec3 lookat, vec3 vup, float vfov, float aspect, float aperture, float focus_dist) {
             // vfov is top to bottom in degrees
             lens_radius = aperture / 2;
-            float theta = vfov*M_PI/180;
+            float theta = vfov*pi<float>()/180;
             float half_height = tan(theta/2);
             float half_width = aspect * half_height;
             origin = lookfrom;
