@@ -10,13 +10,13 @@
 //==================================================================================================
 
 #include <iostream>
+#include <cfloat>
+
 #include "sphere.h"
 #include "hitable_list.h"
-#include "float.h"
 #include "camera.h"
 #include "material.h"
 #include "random.h"
-
 
 vec3 color(const ray& r, hitable *world, int depth) {
     hit_record rec;
