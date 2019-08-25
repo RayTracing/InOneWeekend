@@ -11,12 +11,11 @@
                         **Chapter 3: Rays, a simple camera, and background**
 
 The one thing that all ray tracers have is a ray class, and a computation of what color is seen
-along a ray. Let’s think of a ray as a function $p(t) = A + t*B$. Here $p$ is a 3D position along a
-line in 3D. $A$ is the ray origin and $B$ is the ray direction. The ray parameter $t$ is a real
-number (float in the code). Plug in a different $t$ and $p(t)$ moves the point along the ray. Add in
-negative $t$ and you can go anywhere on the 3D line. For positive $t$, you get only the parts in
-front of $A$, and this is what is often called a half-line or ray. The example $C = p(2)$ is shown
-here:
+along a ray. Let’s think of a ray as a function $p(t) = A + t \cdot B$. Here $p$ is a 3D position
+along a line in 3D. $A$ is the ray origin and $B$ is the ray direction. The ray parameter $t$ is a real number (float in the code). Plug in a different $t$ and $p(t)$ moves the point along the ray.
+Add in negative $t$ and you can go anywhere on the 3D line. For positive $t$, you get only the
+parts in front of $A$, and this is what is often called a half-line or ray. The example $C = p(2)$
+is shown here:
 
 ![Figure 3-1](../assets/fig03-1.jpg)
 
@@ -103,7 +102,7 @@ of scaling that to $0.0 < t < 1.0$. When $t = 1.0$ I want blue. When $t = 0.0$ I
 between, I want a blend. This forms a “linear blend”, or “linear interpolation”, or “lerp” for
 short, between two things. A lerp is always of the form
 
-    $$ blendedValue = (1-t)*startValue + t*endValue, $$
+  $$ blendedValue = (1-t) \cdot startValue + t \cdot endValue, $$
 
 with $t$ going from zero to one. In our case this produces:
 
