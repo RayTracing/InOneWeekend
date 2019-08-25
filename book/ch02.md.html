@@ -17,7 +17,7 @@ class `vec3` for colors, locations, directions, offsets, whatever. Some people d
 because it doesn’t prevent you from doing something silly, like adding a color to a location. They
 have a good point, but we’re going to always take the “less code” route when not obviously wrong.
 
-Here’s the top part of my vec3 class:
+Here’s the top part of my `vec3` class:
 
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ C++
     #include <math.h>
@@ -55,8 +55,8 @@ Here’s the top part of my vec3 class:
     };
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-I use floats here, but in some ray tracers I have used doubles. Neither is correct -- follow your
-own tastes. Everything is in the header file, and later on in the file are lots of vector
+I use `float`s here, but in some ray tracers I have used `double`s. Neither is correct -- follow
+your own tastes. Everything is in the header file, and later on in the file are lots of vector
 operations:
 
     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ C++
