@@ -84,7 +84,11 @@ int main() {
     int nx = 1200;
     int ny = 800;
     int ns = 10;
-    std::cout << "P3\n" << nx << " " << ny << "\n255\n";
+
+    std::cout << "P3\n";
+    std::cout << nx << ' ' << ny << '\n';
+    std::cout << "255\n";
+
     hitable *world = random_scene();
 
     vec3 lookfrom(13,2,3);
@@ -108,7 +112,7 @@ int main() {
             int ir = int(255.99*col[0]);
             int ig = int(255.99*col[1]);
             int ib = int(255.99*col[2]);
-            std::cout << ir << " " << ig << " " << ib << "\n";
+            std::cout << ir << ' ' << ig << ' ' << ib << '\n';
         }
     }
 }
